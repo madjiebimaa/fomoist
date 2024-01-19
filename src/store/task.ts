@@ -1,9 +1,10 @@
 import { UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { Task } from '@/lib/types';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createTask } from '@/lib/utils';
 
 type TaskState = {
   tasks: Task[];
@@ -42,16 +43,7 @@ const taskStore = create<TaskState & TaskActions>()(
       actions: {
         addTask: (name, estimation, description) =>
           set((state) => ({
-            tasks: [
-              ...state.tasks,
-              {
-                id: crypto.randomUUID(),
-                name,
-                estimation,
-                description,
-                isFinished: false,
-              },
-            ],
+            tasks: [...state.tasks, createTask(name, estimation, description)],
           })),
         selectTask: (task) =>
           set((state) => ({

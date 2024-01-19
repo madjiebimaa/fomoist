@@ -1,11 +1,13 @@
-import { MoreVertical, Trash } from 'lucide-react';
+import { MoreVertical, Trash, Trash2 } from 'lucide-react';
 
+import TemplateFormDialog from './TemplateFormDialog';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 
@@ -23,15 +25,19 @@ export default function TaskDropDown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
+          <TemplateFormDialog />
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
           <DropdownMenuItem
-            className="text-rose-500 cursor-pointer hover:bg-slate-200"
+            className="text-rose-500 cursor-pointer focus:text-rose-600 hover:bg-slate-200"
             onClick={() => taskActions.deleteFinishedTasks()}
           >
-            <Trash className="shrink-0 h-4 w-4 mr-2" />
+            <Trash2 className="shrink-0 h-4 w-4 mr-2" />
             <span>Delete finished tasks</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="text-rose-500 cursor-pointer hover:bg-slate-200"
+            className="text-rose-500 cursor-pointer focus:text-rose-600 hover:bg-slate-200"
             onClick={() => taskActions.deleteAllTasks()}
           >
             <Trash className="shrink-0 h-4 w-4 mr-2" />
