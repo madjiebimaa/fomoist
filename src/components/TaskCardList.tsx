@@ -12,6 +12,7 @@ import { SortableContext } from '@dnd-kit/sortable';
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import FinishedTasksCollapsible from './FinishedTasksCollapsible';
 import TaskCard from './TaskCard';
 
 import { Task } from '@/lib/types';
@@ -37,6 +38,10 @@ export default function TaskCardList() {
   );
 
   const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
+  const unfinishedTasks = useMemo(
+    () => tasks.filter((task) => !task.isFinished),
+    [tasks]
+  );
 
   const handleDragStart = (event: DragStartEvent) => {
     if (
@@ -62,9 +67,10 @@ export default function TaskCardList() {
     >
       <section className="flex flex-col">
         <SortableContext items={taskIds}>
-          {tasks.map((task) => (
+          {unfinishedTasks.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
+          <FinishedTasksCollapsible className="mt-10" />
         </SortableContext>
       </section>
 
