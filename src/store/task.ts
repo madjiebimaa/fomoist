@@ -63,7 +63,9 @@ const taskStore = create<TaskState & TaskActions>()((set) => ({
 
         return {
           tasks: nextTasks,
-          selectedTask: nextTasks[nextSelectedTaskIndex],
+          selectedTask: state.selectedTask
+            ? nextTasks[nextSelectedTaskIndex]
+            : null,
         };
       }),
   },
