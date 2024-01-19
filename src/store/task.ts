@@ -22,6 +22,8 @@ type TaskActions = {
       id: Task['id'] | UniqueIdentifier,
       destinationID: Task['id'] | UniqueIdentifier
     ) => void;
+    deleteFinishedTasks: () => void;
+    deleteAllTasks: () => void;
   };
 };
 
@@ -52,7 +54,8 @@ const taskStore = create<TaskState & TaskActions>()((set) => ({
       })),
     toggleFinishedTask: (id) =>
       set((state) => {
-        const nextTasks = state.tasks.map((task) => {
+        let nextTasks = state.tasks;
+        nextTasks = nextTasks.map((task) => {
           if (task.id === id) {
             return {
               ...task,
@@ -63,15 +66,28 @@ const taskStore = create<TaskState & TaskActions>()((set) => ({
           return task;
         });
 
-        const nextSelectedTaskIndex = nextTasks.findIndex(
-          (task) => !task.isFinished
-        );
+        const taskToPush = nextTasks.find((task) => task.id)!;
+        if (taskToPush.isFinished) {
+          nextTasks = [
+            ...nextTasks.filter((task) => task.id !== taskToPush.id),
+            taskToPush,
+          ];
+        }
+
+        let selectedTaskIndex: number | null = null;
+        nextTasks.every((task, index) => {
+          if (!task.isFinished) {
+            selectedTaskIndex = index;
+            return false;
+          }
+
+          return true;
+        });
 
         return {
           tasks: nextTasks,
-          selectedTask: state.selectedTask
-            ? nextTasks[nextSelectedTaskIndex]
-            : null,
+          selectedTask:
+            selectedTaskIndex !== null ? nextTasks[selectedTaskIndex] : null,
         };
       }),
     moveTasks: (id, destinationID) =>
@@ -85,6 +101,11 @@ const taskStore = create<TaskState & TaskActions>()((set) => ({
           tasks: arrayMove(state.tasks, taskIndex, destinationTaskIndex),
         };
       }),
+    deleteFinishedTasks: () =>
+      set((state) => ({
+        tasks: state.tasks.filter((task) => !task.isFinished),
+      })),
+    deleteAllTasks: () => set({ tasks: initialState.tasks }),
   },
 }));
 
