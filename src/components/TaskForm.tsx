@@ -4,6 +4,7 @@ import {
   ChevronUp,
   Hourglass,
   SendHorizonal,
+  Trash,
   X,
 } from 'lucide-react';
 import React, { forwardRef } from 'react';
@@ -66,7 +67,20 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
       const { name, estimation, description } = values;
-      taskActions.addTask(name, estimation, description);
+      if (task) {
+        taskActions.editTask({
+          id: task.id,
+          name,
+          estimation,
+          isFinished: task.isFinished,
+          description,
+        });
+
+        onClose();
+      } else {
+        taskActions.addTask(name, estimation, description);
+      }
+
       form.reset();
     };
 
@@ -167,25 +181,38 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
           </Form>
         </CardContent>
         <Separator />
-        <CardFooter className="flex justify-end items-center gap-2 p-2">
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            className="shrink-0 h-8 w-8"
-            onClick={onClose}
-          >
-            <X className="shrink-0 h-4 w-4" />
-          </Button>
-          <Button
-            type="submit"
-            size="icon"
-            className="shrink-0 h-8 w-8"
-            disabled={!form.formState.isValid}
-            onClick={form.handleSubmit(onSubmit)}
-          >
-            <SendHorizonal className="shrink-0 h-4 w-4" />
-          </Button>
+        <CardFooter className="flex justify-between items-center p-2">
+          {task && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="shrink-0 h-8 w-8"
+              onClick={() => taskActions.deleteTask(task.id)}
+            >
+              <Trash className="shrink-0 h-4 w-4 text-rose-500" />
+            </Button>
+          )}
+          <div className="flex items-center gap-2 ml-auto">
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon"
+              className="shrink-0 h-8 w-8"
+              onClick={onClose}
+            >
+              <X className="shrink-0 h-4 w-4" />
+            </Button>
+            <Button
+              type="submit"
+              size="icon"
+              className="shrink-0 h-8 w-8"
+              disabled={!form.formState.isValid}
+              onClick={form.handleSubmit(onSubmit)}
+            >
+              <SendHorizonal className="shrink-0 h-4 w-4" />
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     );
