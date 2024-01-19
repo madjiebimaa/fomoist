@@ -24,6 +24,8 @@ type TaskActions = {
     ) => void;
     deleteFinishedTasks: () => void;
     deleteAllTasks: () => void;
+    deleteTask: (id: Task['id']) => void;
+    editTask: (taskToEdit: Task) => void;
   };
 };
 
@@ -106,6 +108,18 @@ const taskStore = create<TaskState & TaskActions>()((set) => ({
         tasks: state.tasks.filter((task) => !task.isFinished),
       })),
     deleteAllTasks: () => set({ tasks: initialState.tasks }),
+    deleteTask: (id) =>
+      set((state) => ({ tasks: state.tasks.filter((task) => task.id !== id) })),
+    editTask: (taskToEdit) =>
+      set((state) => ({
+        tasks: state.tasks.map((task) => {
+          if (task.id === taskToEdit.id) {
+            return taskToEdit;
+          }
+
+          return task;
+        }),
+      })),
   },
 }));
 
