@@ -1,4 +1,6 @@
-import { Check, Focus, PenLine, StickyNote } from 'lucide-react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Check, Focus, GripVertical, PenLine, StickyNote } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -19,6 +21,21 @@ export default function TaskCard({ task }: TaskCardProps) {
   const selectedTask = useSelectedTask();
   const taskActions = useTaskActions();
 
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+    data: {
+      type: 'Task Card',
+      task,
+    },
+  });
+
   const isSelectedTask = selectedTask && selectedTask.id === task.id;
 
   const handleCheckClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,6 +55,21 @@ export default function TaskCard({ task }: TaskCardProps) {
     });
   };
 
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="h-[65px] bg-white border-2 border-dashed border-slate-200"
+      />
+    );
+  }
+
   return isTaskFormOpen ? (
     <TaskForm
       task={task}
@@ -46,12 +78,23 @@ export default function TaskCard({ task }: TaskCardProps) {
     />
   ) : (
     <Card
-      className="group/task-card border-none rounded-none shadow-none cursor-pointer"
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="group/task-card border-none rounded-none shadow-none cursor-pointer touch-none select-none"
       onClick={() => taskActions.selectTask(task)}
     >
       <CardContent className="relative flex flex-col p-0 py-2 border-b border-b-slate-200">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute -left-8 group/button shrink-0 h-8 w-8 cursor-move opacity-0 group-hover/task-card:opacity-100 group-hover/task-card:transition-opacity group-hover/task-card:duration-300"
+            >
+              <GripVertical className="shrink-0 h-4 w-4 text-slate-400 group-hover/button:text-slate-900" />
+            </Button>
             <Button
               variant="outline"
               size="icon"
@@ -97,7 +140,7 @@ export default function TaskCard({ task }: TaskCardProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="group/button absolute -right-8 shrink-0 h-8 w-8"
+                className="absolute -right-8 shrink-0 h-8 w-8"
                 disabled
               >
                 <Focus className="shrink-0 h-4 w-4" />

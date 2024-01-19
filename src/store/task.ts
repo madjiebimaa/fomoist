@@ -1,3 +1,5 @@
+import { UniqueIdentifier } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
 
 import { Task } from '@/lib/types';
@@ -16,6 +18,10 @@ type TaskActions = {
     ) => void;
     selectTask: (task: Task) => void;
     toggleFinishedTask: (id: Task['id']) => void;
+    moveTasks: (
+      id: Task['id'] | UniqueIdentifier,
+      destinationID: Task['id'] | UniqueIdentifier
+    ) => void;
   };
 };
 
@@ -66,6 +72,17 @@ const taskStore = create<TaskState & TaskActions>()((set) => ({
           selectedTask: state.selectedTask
             ? nextTasks[nextSelectedTaskIndex]
             : null,
+        };
+      }),
+    moveTasks: (id, destinationID) =>
+      set((state) => {
+        const taskIndex = state.tasks.findIndex((task) => task.id === id);
+        const destinationTaskIndex = state.tasks.findIndex(
+          (task) => task.id === destinationID
+        );
+
+        return {
+          tasks: arrayMove(state.tasks, taskIndex, destinationTaskIndex),
         };
       }),
   },
