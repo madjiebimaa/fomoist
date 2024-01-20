@@ -11,7 +11,7 @@ import React, { forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button, buttonVariants } from './ui/button';
+import { Button, ButtonProps, buttonVariants } from './ui/button';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Form, FormControl, FormField, FormItem } from './ui/form';
 import { Input } from './ui/input';
@@ -84,6 +84,20 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
       form.reset();
     };
 
+    const fieldStyle = {
+      className:
+        'p-0 border-none rounded-none font-medium focus-visible:ring-0 focus-visible:ring-offset-0',
+    };
+
+    const estimationButtonStyle: Pick<
+      ButtonProps,
+      'variant' | 'size' | 'className'
+    > = {
+      variant: 'ghost',
+      size: 'icon',
+      className: 'shrink-0 h-fit w-fit',
+    };
+
     return (
       <Card
         ref={ref}
@@ -108,7 +122,7 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                         autoFocus
                         autoComplete="off"
                         placeholder="Task name"
-                        className="p-0 border-none rounded-none font-medium focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className={cn(fieldStyle.className)}
                         onKeyDown={handleKeyDown}
                       />
                     </FormControl>
@@ -124,7 +138,10 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                       <Textarea
                         {...field}
                         placeholder="Description"
-                        className="h-fit min-h-fit p-0 border-none rounded-none font-light focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className={cn(
+                          fieldStyle.className,
+                          'h-fit min-h-fit font-light'
+                        )}
                         onKeyDown={handleKeyDown}
                       />
                     </FormControl>
@@ -153,9 +170,9 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                     <div className="flex items-center gap-2">
                       <Button
                         type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="shrink-0 h-fit w-fit"
+                        variant={estimationButtonStyle.variant}
+                        size={estimationButtonStyle.size}
+                        className={cn(estimationButtonStyle.className)}
                       >
                         <ChevronUp
                           className="shrink-0 h-4 w-4 text-slate-400 hover:text-slate-900"
@@ -164,9 +181,9 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                       </Button>
                       <Button
                         type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="shrink-0 h-fit w-fit"
+                        variant={estimationButtonStyle.variant}
+                        size={estimationButtonStyle.size}
+                        className={cn(estimationButtonStyle.className)}
                       >
                         <ChevronDown
                           className="shrink-0 h-4 w-4 text-slate-400 hover:text-slate-900"

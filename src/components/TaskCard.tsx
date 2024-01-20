@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import TaskForm from './TaskForm';
-import { Button } from './ui/button';
+import { Button, ButtonProps } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
 import { Task } from '@/lib/types';
@@ -70,6 +70,19 @@ export default function TaskCard({ task }: TaskCardProps) {
     );
   }
 
+  const hiddenButtonStyle: Pick<ButtonProps, 'variant' | 'size' | 'className'> =
+    {
+      variant: 'ghost',
+      size: 'icon',
+      className:
+        'group/button shrink-0 h-8 w-8 opacity-0 invisible group-hover/task-card:opacity-100 group-hover/task-card:visible group-hover/task-card:transition-opacity group-hover/task-card:duration-300',
+    };
+
+  const hiddenButtonIconStyle = {
+    className:
+      'shrink-0 h-4 w-4 text-slate-400 group-hover/button:text-slate-900',
+  };
+
   return isTaskFormOpen ? (
     <TaskForm
       task={task}
@@ -89,11 +102,14 @@ export default function TaskCard({ task }: TaskCardProps) {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="icon"
-              className="absolute -left-8 group/button shrink-0 h-8 w-8 cursor-move opacity-0 group-hover/task-card:opacity-100 group-hover/task-card:transition-opacity group-hover/task-card:duration-300"
+              variant={hiddenButtonStyle.variant}
+              size={hiddenButtonStyle.size}
+              className={cn(
+                hiddenButtonStyle.className,
+                'absolute -left-8 cursor-move'
+              )}
             >
-              <GripVertical className="shrink-0 h-4 w-4 text-slate-400 group-hover/button:text-slate-900" />
+              <GripVertical className={cn(hiddenButtonIconStyle.className)} />
             </Button>
             <Button
               variant="outline"
@@ -120,21 +136,21 @@ export default function TaskCard({ task }: TaskCardProps) {
           <div className="flex items-center">
             {task.description && (
               <Button
-                variant="ghost"
-                size="icon"
-                className="group/button shrink-0 h-8 w-8 opacity-0 group-hover/task-card:opacity-100 group-hover/task-card:transition-opacity group-hover/task-card:duration-300"
+                variant={hiddenButtonStyle.variant}
+                size={hiddenButtonStyle.size}
+                className={cn(hiddenButtonStyle.className)}
                 onClick={handleNoteClick}
               >
-                <StickyNote className="shrink-0 h-4 w-4 text-slate-400 group-hover/button:text-slate-900" />
+                <StickyNote className={cn(hiddenButtonIconStyle.className)} />
               </Button>
             )}
             <Button
-              variant="ghost"
-              size="icon"
-              className="group/button shrink-0 h-8 w-8 opacity-0 group-hover/task-card:opacity-100 group-hover/task-card:transition-opacity group-hover/task-card:duration-300"
+              variant={hiddenButtonStyle.variant}
+              size={hiddenButtonStyle.size}
+              className={cn(hiddenButtonStyle.className)}
               onClick={handleEditClick}
             >
-              <PenLine className="shrink-0 h-4 w-4 text-slate-400 group-hover/button:text-slate-900" />
+              <PenLine className={cn(hiddenButtonIconStyle.className)} />
             </Button>
             {isSelectedTask && (
               <Button

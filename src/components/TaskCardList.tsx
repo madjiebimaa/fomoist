@@ -65,7 +65,7 @@ export default function TaskCardList() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <section className="flex flex-col">
+      <section className="flex flex-col gap-1">
         <SortableContext items={taskIds}>
           {unfinishedTasks.map((task) => (
             <TaskCard key={task.id} task={task} />
