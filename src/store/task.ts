@@ -3,7 +3,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { Task, Template } from '@/lib/types';
+import { AddTaskParams, Task, Template } from '@/lib/types';
 import { createTask } from '@/lib/utils';
 
 type TaskState = {
@@ -14,11 +14,7 @@ type TaskState = {
 
 type TaskActions = {
   actions: {
-    addTask: (
-      name: Task['name'],
-      estimation: Task['estimation'],
-      decription?: Task['description']
-    ) => void;
+    addTask: (task: AddTaskParams) => void;
     selectTask: (task: Task) => void;
     toggleFinishedTask: (id: Task['id']) => void;
     moveTasks: (
@@ -46,9 +42,9 @@ const taskStore = create<TaskState & TaskActions>()(
     (set) => ({
       ...initialState,
       actions: {
-        addTask: (name, estimation, description) =>
+        addTask: (task) =>
           set((state) => ({
-            tasks: [...state.tasks, createTask(name, estimation, description)],
+            tasks: [...state.tasks, createTask(task)],
           })),
         selectTask: (task) =>
           set((state) => ({
@@ -133,9 +129,7 @@ const taskStore = create<TaskState & TaskActions>()(
                 name,
                 tasks: tasks
                   .filter((task) => !task.isFinished)
-                  .map((task) =>
-                    createTask(task.name, task.estimation, task.description)
-                  ),
+                  .map((task) => createTask(task)),
               },
             ],
           })),
@@ -148,9 +142,7 @@ const taskStore = create<TaskState & TaskActions>()(
             return {
               tasks: [
                 ...state.tasks,
-                ...template.tasks.map((task) =>
-                  createTask(task.name, task.estimation, task.description)
-                ),
+                ...template.tasks.map((task) => createTask(task)),
               ],
             };
           }),

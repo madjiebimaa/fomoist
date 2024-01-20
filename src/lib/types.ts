@@ -1,9 +1,12 @@
+export type TaskPriority = 1 | 2 | 3 | 4;
+
 export interface Task {
   id: string;
   name: string;
-  description?: string;
   estimation: number;
   isFinished: boolean;
+  priority: TaskPriority;
+  description?: string;
 }
 
 export interface Template {
@@ -11,3 +14,9 @@ export interface Template {
   name: string;
   tasks: Omit<Task, 'id' | 'isFinished'>[];
 }
+
+export type AddTaskParams = Pick<
+  Task,
+  'name' | 'description' | 'estimation' | 'priority'
+>;
+export type CreateTaskParams = AddTaskParams;

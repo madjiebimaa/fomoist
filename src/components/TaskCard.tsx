@@ -114,13 +114,21 @@ export default function TaskCard({ task }: TaskCardProps) {
             <Button
               variant="outline"
               size="icon"
-              className="group/check-button shrink-0 h-5 w-5 rounded-full hover:bg-transparent"
+              className={cn(
+                'group/check-button shrink-0 h-5 w-5 rounded-full hover:bg-transparent',
+                task.priority === 1 && 'border-red-400',
+                task.priority === 2 && 'border-yellow-400',
+                task.priority === 3 && 'border-blue-400'
+              )}
               onClick={handleCheckClick}
             >
               <Check
                 className={cn(
                   'shrink-0 h-3 w-3 text-slate-400 opacity-0 group-hover/check-button:opacity-100 group-hover/check-button:transition-opacity group-hover/check-button:duration-300',
-                  task.isFinished && 'opacity-100'
+                  task.isFinished && 'opacity-100',
+                  task.priority === 1 && 'text-red-400',
+                  task.priority === 2 && 'text-yellow-400',
+                  task.priority === 3 && 'text-blue-400'
                 )}
               />
             </Button>
