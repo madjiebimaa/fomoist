@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SaveAll, SendHorizonal, X } from 'lucide-react';
+import { SaveAll, SendHorizonal } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -7,8 +7,8 @@ import * as z from 'zod';
 import { Button } from './ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,8 +18,7 @@ import { DropdownMenuItem } from './ui/dropdown-menu';
 import { Form, FormControl, FormField, FormItem } from './ui/form';
 import { Input } from './ui/input';
 
-import { useTasks } from '@/store/task';
-import { useTemplateActions } from '@/store/template';
+import { useTaskActions, useTasks } from '@/store/task';
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -27,8 +26,8 @@ const formSchema = z.object({
 
 export default function TemplateFormDialog() {
   const [open, setOpen] = useState(false);
-  const templateActions = useTemplateActions();
   const tasks = useTasks();
+  const taskActions = useTaskActions();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,7 +38,7 @@ export default function TemplateFormDialog() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const { name } = values;
-    templateActions.addTemplate(name, tasks);
+    taskActions.addTemplate(name, tasks);
     form.reset();
     setOpen(false);
   };
@@ -58,6 +57,9 @@ export default function TemplateFormDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Save template</DialogTitle>
+          <DialogDescription>
+            Create a custom template by saving the current tasks.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -85,16 +87,6 @@ export default function TemplateFormDialog() {
           </form>
         </Form>
         <DialogFooter className="flex flex-row justify-end items-center gap-2 sm:space-x-0">
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              size="icon"
-              className="shrink-0 h-8 w-8"
-            >
-              <X className="shrink-0 h-4 w-4" />
-            </Button>
-          </DialogClose>
           <Button
             type="submit"
             size="icon"

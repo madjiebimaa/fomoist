@@ -1,5 +1,6 @@
 import { MoreVertical, Trash, Trash2 } from 'lucide-react';
 
+import AddTasksFromTemplateDialog from './AddTasksFromTemplateDialog';
 import TemplateFormDialog from './TemplateFormDialog';
 import { Button } from './ui/button';
 import {
@@ -26,6 +27,7 @@ export default function TaskDropDown() {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <TemplateFormDialog />
+          <AddTasksFromTemplateDialog />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

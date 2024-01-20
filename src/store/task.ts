@@ -3,12 +3,13 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { Task } from '@/lib/types';
+import { Task, Template } from '@/lib/types';
 import { createTask } from '@/lib/utils';
 
 type TaskState = {
   tasks: Task[];
   selectedTask: Task | null;
+  templates: Template[];
 };
 
 type TaskActions = {
@@ -28,12 +29,16 @@ type TaskActions = {
     deleteAllTasks: () => void;
     deleteTask: (id: Task['id']) => void;
     editTask: (taskToEdit: Task) => void;
+    addTemplate: (name: Template['name'], tasks: Task[]) => void;
+    addTasksFromTemplate: (id: Template['id']) => void;
+    deleteTemplate: (id: Template['id']) => void;
   };
 };
 
 const initialState: TaskState = {
   tasks: [],
   selectedTask: null,
+  templates: [],
 };
 
 const taskStore = create<TaskState & TaskActions>()(
@@ -119,6 +124,40 @@ const taskStore = create<TaskState & TaskActions>()(
               return task;
             }),
           })),
+        addTemplate: (name, tasks) =>
+          set((state) => ({
+            templates: [
+              ...state.templates,
+              {
+                id: crypto.randomUUID(),
+                name,
+                tasks: tasks
+                  .filter((task) => !task.isFinished)
+                  .map((task) =>
+                    createTask(task.name, task.estimation, task.description)
+                  ),
+              },
+            ],
+          })),
+        addTasksFromTemplate: (id) =>
+          set((state) => {
+            const template = state.templates.find(
+              (template) => template.id === id
+            )!;
+
+            return {
+              tasks: [
+                ...state.tasks,
+                ...template.tasks.map((task) =>
+                  createTask(task.name, task.estimation, task.description)
+                ),
+              ],
+            };
+          }),
+        deleteTemplate: (id) =>
+          set((state) => ({
+            templates: state.templates.filter((template) => template.id !== id),
+          })),
       },
     }),
     {
@@ -127,6 +166,7 @@ const taskStore = create<TaskState & TaskActions>()(
       partialize: (state) => ({
         tasks: state.tasks,
         selectedTask: state.selectedTask,
+        templates: state.templates,
       }),
     }
   )
@@ -134,4 +174,5 @@ const taskStore = create<TaskState & TaskActions>()(
 
 export const useTasks = () => taskStore((state) => state.tasks);
 export const useSelectedTask = () => taskStore((state) => state.selectedTask);
+export const useTemplates = () => taskStore((state) => state.templates);
 export const useTaskActions = () => taskStore((state) => state.actions);

@@ -9,5 +9,5 @@ export interface Task {
 export interface Template {
   id: string;
   name: string;
-  tasks: Task[];
+  tasks: Omit<Task, 'id' | 'isFinished'>[];
 }
