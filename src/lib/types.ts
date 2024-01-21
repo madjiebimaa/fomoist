@@ -19,6 +19,8 @@ export interface Template {
 
 export type TaskFilterSort = 'DATE_ADDED' | 'NAME' | 'PRIORITY';
 
+export type TaskFilterSortDirection = 'ASCENDING' | 'DESCENDING';
+
 export type AddTaskParams = Pick<
   Task,
   'name' | 'description' | 'estimation' | 'priority'

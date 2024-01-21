@@ -3,7 +3,13 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { AddTaskParams, Task, TaskFilterSort, Template } from '@/lib/types';
+import {
+  AddTaskParams,
+  Task,
+  TaskFilterSort,
+  TaskFilterSortDirection,
+  Template,
+} from '@/lib/types';
 import { alphabetComparison, createTask } from '@/lib/utils';
 
 type TaskState = {
@@ -13,6 +19,7 @@ type TaskState = {
   filters: {
     sort: {
       value: TaskFilterSort;
+      direction: TaskFilterSortDirection;
     };
   };
 };
@@ -33,7 +40,10 @@ type TaskActions = {
     addTemplate: (name: Template['name'], tasks: Task[]) => void;
     addTasksFromTemplate: (id: Template['id']) => void;
     deleteTemplate: (id: Template['id']) => void;
-    sortTasks: (value: TaskFilterSort) => void;
+    sortTasks: (
+      value?: TaskFilterSort,
+      direction?: TaskFilterSortDirection
+    ) => void;
   };
 };
 
@@ -44,6 +54,7 @@ const initialState: TaskState = {
   filters: {
     sort: {
       value: 'DATE_ADDED',
+      direction: 'ASCENDING',
     },
   },
 };
@@ -162,23 +173,32 @@ const taskStore = create<TaskState & TaskActions>()(
           set((state) => ({
             templates: state.templates.filter((template) => template.id !== id),
           })),
-        sortTasks: (value) =>
+        sortTasks: (value, direction) =>
           set((state) => {
+            const sortValue = value ? value : state.filters.sort.value;
+            const sortDirection = direction
+              ? direction
+              : state.filters.sort.direction;
             let sortedTasks = state.tasks;
-            switch (value) {
+
+            const directionNumber = sortDirection === 'ASCENDING' ? 1 : -1;
+
+            switch (sortValue) {
               case 'DATE_ADDED':
                 sortedTasks = sortedTasks.sort(
-                  (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+                  (a, b) =>
+                    (a.createdAt.getTime() - b.createdAt.getTime()) *
+                    directionNumber
                 );
                 break;
               case 'NAME':
-                sortedTasks = sortedTasks.sort((a, b) =>
-                  alphabetComparison(a, b)
+                sortedTasks = sortedTasks.sort(
+                  (a, b) => alphabetComparison(a, b) * directionNumber
                 );
                 break;
               case 'PRIORITY':
                 sortedTasks = sortedTasks.sort(
-                  (a, b) => a.priority - b.priority
+                  (a, b) => (a.priority - b.priority) * directionNumber
                 );
                 break;
             }
@@ -186,7 +206,8 @@ const taskStore = create<TaskState & TaskActions>()(
             return {
               filters: {
                 sort: {
-                  value,
+                  value: sortValue,
+                  direction: sortDirection,
                 },
               },
               tasks: [...sortedTasks],
@@ -196,11 +217,20 @@ const taskStore = create<TaskState & TaskActions>()(
     }),
     {
       name: 'task-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => localStorage, {
+        reviver: (key, value) => {
+          if (key === 'createdAt' && typeof value === 'string') {
+            return new Date(value);
+          }
+
+          return value;
+        },
+      }),
       partialize: (state) => ({
         tasks: state.tasks,
         selectedTask: state.selectedTask,
         templates: state.templates,
+        filters: state.filters,
       }),
     }
   )

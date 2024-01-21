@@ -19,7 +19,7 @@ import {
 } from '@/lib/constants';
 import { Task, TaskPriority } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useTaskActions, useTaskFilters } from '@/store/task';
+import { useTaskActions } from '@/store/task';
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -35,7 +35,6 @@ interface TaskFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
   ({ task, onClose, className, ...props }, ref) => {
-    const taskFilters = useTaskFilters();
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -69,7 +68,7 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
           createdAt: task.createdAt,
         });
 
-        taskActions.sortTasks(taskFilters.sort.value);
+        taskActions.sortTasks();
         onClose();
       } else {
         taskActions.addTask({
@@ -79,7 +78,7 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
           priority: priority as TaskPriority,
         });
 
-        taskActions.sortTasks(taskFilters.sort.value);
+        taskActions.sortTasks();
       }
 
       form.reset();

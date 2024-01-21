@@ -12,10 +12,9 @@ import {
 import { DropdownMenuItem } from './ui/dropdown-menu';
 
 import { cn } from '@/lib/utils';
-import { useTaskActions, useTaskFilters, useTemplates } from '@/store/task';
+import { useTaskActions, useTemplates } from '@/store/task';
 
 export default function AddTasksFromTemplateDialog() {
-  const taskFilters = useTaskFilters();
   const templates = useTemplates();
   const taskActions = useTaskActions();
 
@@ -53,7 +52,7 @@ export default function AddTasksFromTemplateDialog() {
                 )}
                 onClick={() => {
                   taskActions.addTasksFromTemplate(template.id);
-                  taskActions.sortTasks(taskFilters.sort.value);
+                  taskActions.sortTasks();
                 }}
               >
                 <span>{template.name}</span>
