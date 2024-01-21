@@ -9,7 +9,7 @@ import { Button, ButtonProps } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
 import { Task } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import { cn, getTaskColor } from '@/lib/utils';
 import { useSelectedTask, useTaskActions } from '@/store/task';
 
 interface TaskCardProps {
@@ -116,9 +116,7 @@ export default function TaskCard({ task }: TaskCardProps) {
               size="icon"
               className={cn(
                 'group/check-button shrink-0 h-5 w-5 rounded-full hover:bg-transparent',
-                task.priority === 1 && 'border-red-400',
-                task.priority === 2 && 'border-yellow-400',
-                task.priority === 3 && 'border-blue-400'
+                `border-${getTaskColor(task.priority)}`
               )}
               onClick={handleCheckClick}
             >
@@ -126,9 +124,7 @@ export default function TaskCard({ task }: TaskCardProps) {
                 className={cn(
                   'shrink-0 h-3 w-3 text-slate-400 opacity-0 group-hover/check-button:opacity-100 group-hover/check-button:transition-opacity group-hover/check-button:duration-300',
                   task.isFinished && 'opacity-100',
-                  task.priority === 1 && 'text-red-400',
-                  task.priority === 2 && 'text-yellow-400',
-                  task.priority === 3 && 'text-blue-400'
+                  `text-${getTaskColor(task.priority)}`
                 )}
               />
             </Button>

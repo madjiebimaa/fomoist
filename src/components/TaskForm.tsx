@@ -1,18 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  ChevronDown,
-  ChevronUp,
-  Flag,
-  Hourglass,
-  SendHorizonal,
-  Trash,
-  X,
-} from 'lucide-react';
-import React, { forwardRef, useState } from 'react';
+import { SendHorizonal, Trash, X } from 'lucide-react';
+import React, { forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button, ButtonProps, buttonVariants } from './ui/button';
+import TaskEstimationButton from './TaskEstimationButton';
+import TaskPriorityPopover from './TaskPriorityPopover';
+import { Button } from './ui/button';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Form, FormControl, FormField, FormItem } from './ui/form';
 import { Input } from './ui/input';
@@ -26,8 +20,6 @@ import {
 import { Task, TaskPriority } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useTaskActions } from '@/store/task';
-import { PopoverTrigger } from '@radix-ui/react-popover';
-import { Popover, PopoverContent } from './ui/popover';
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -43,7 +35,6 @@ interface TaskFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
   ({ task, onClose, className, ...props }, ref) => {
-    const [open, setOpen] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -55,17 +46,6 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
     });
 
     const taskActions = useTaskActions();
-
-    const handleIncreaseEstimationClick = () => {
-      form.setValue('estimation', form.getValues('estimation') + 1);
-    };
-
-    const handleDecreaseEstimationClick = () => {
-      const estimation = form.getValues('estimation');
-      if (estimation > 1) {
-        form.setValue('estimation', form.getValues('estimation') - 1);
-      }
-    };
 
     const handleKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -104,51 +84,6 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
       className:
         'p-0 border-none rounded-none font-medium focus-visible:ring-0 focus-visible:ring-offset-0',
     };
-
-    const estimationButtonStyle: Pick<
-      ButtonProps,
-      'variant' | 'size' | 'className'
-    > = {
-      variant: 'ghost',
-      size: 'icon',
-      className: 'shrink-0 h-fit w-fit',
-    };
-
-    const priorities: {
-      label: string;
-      value: TaskPriority;
-      textColor: string;
-      fillColor: string;
-    }[] = [
-      {
-        label: 'P1',
-        value: 1,
-        textColor: 'text-red-400',
-        fillColor: 'fill-red-400',
-      },
-      {
-        label: 'P2',
-        value: 2,
-        textColor: 'text-yellow-400',
-        fillColor: 'fill-yellow-400',
-      },
-      {
-        label: 'P3',
-        value: 3,
-        textColor: 'text-blue-400',
-        fillColor: 'fill-blue-400',
-      },
-      {
-        label: 'Priority',
-        value: 4,
-        textColor: 'text-slate-400',
-        fillColor: 'fill-transparent',
-      },
-    ];
-
-    const selectedPriority = priorities.find(
-      (priority) => priority.value === form.watch('priority')
-    )!;
 
     return (
       <Card
@@ -207,46 +142,7 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                   render={() => (
                     <FormItem>
                       <FormControl>
-                        <div
-                          className={cn(
-                            buttonVariants({ variant: 'outline', size: 'sm' }),
-                            'shrink-0 h-8 w-fit gap-3 font-normal text-slate-400'
-                          )}
-                        >
-                          <div className="flex items-center">
-                            <Hourglass className="shrink-0 h-4 w-4 mr-1" />
-                            <span className="flex items-center text-slate-400">
-                              <span className="grid place-content-center min-h-4 min-w-4 mr-1">
-                                {form.getValues('estimation')}
-                              </span>
-                              Pomodoro Est
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              type="button"
-                              variant={estimationButtonStyle.variant}
-                              size={estimationButtonStyle.size}
-                              className={cn(estimationButtonStyle.className)}
-                            >
-                              <ChevronUp
-                                className="shrink-0 h-4 w-4 text-slate-400 hover:text-slate-900"
-                                onClick={handleIncreaseEstimationClick}
-                              />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant={estimationButtonStyle.variant}
-                              size={estimationButtonStyle.size}
-                              className={cn(estimationButtonStyle.className)}
-                            >
-                              <ChevronDown
-                                className="shrink-0 h-4 w-4 text-slate-400 hover:text-slate-900"
-                                onClick={handleDecreaseEstimationClick}
-                              />
-                            </Button>
-                          </div>
-                        </div>
+                        <TaskEstimationButton form={form} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -257,84 +153,7 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                   render={() => (
                     <FormItem>
                       <FormControl>
-                        <Popover open={open} onOpenChange={setOpen}>
-                          <PopoverTrigger
-                            asChild
-                            onClick={(event) => event.preventDefault()}
-                          >
-                            <div
-                              className={cn(
-                                buttonVariants({
-                                  variant: 'outline',
-                                  size: 'sm',
-                                }),
-                                'shrink-0 h-8 w-fit font-normal text-slate-400 cursor-pointer'
-                              )}
-                              onClick={() => setOpen(true)}
-                            >
-                              <Flag
-                                className={cn(
-                                  'shrink-0 h-4 w-4 mr-1',
-                                  selectedPriority.textColor,
-                                  selectedPriority.fillColor
-                                )}
-                              />
-                              <span className="text-slate-400">
-                                {selectedPriority.label}
-                              </span>
-                              {selectedPriority.value !==
-                                DEFAULT_TASK_PRIORITY && (
-                                <Button
-                                  type="button"
-                                  variant={estimationButtonStyle.variant}
-                                  size={estimationButtonStyle.size}
-                                  className={cn(
-                                    estimationButtonStyle.className,
-                                    'ml-1'
-                                  )}
-                                >
-                                  <X
-                                    className="shrink-0 h-4 w-4 text-slate-400 hover:text-slate-900"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      form.setValue(
-                                        'priority',
-                                        DEFAULT_TASK_PRIORITY
-                                      );
-                                      setOpen(false);
-                                    }}
-                                  />
-                                </Button>
-                              )}
-                            </div>
-                          </PopoverTrigger>
-                          <PopoverContent className="flex flex-col gap-2 w-fit">
-                            {priorities.map((priority) => (
-                              <Button
-                                key={priority.value}
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className={cn('shrink-0')}
-                                onClick={() => {
-                                  form.setValue('priority', priority.value);
-                                  setOpen(false);
-                                }}
-                              >
-                                <Flag
-                                  className={cn(
-                                    'shrink-0 h-4 w-4 mr-1',
-                                    priority.textColor,
-                                    priority.fillColor
-                                  )}
-                                />
-                                <span className="font-normal text-sm text-slate-900">
-                                  Priority {priority.value}
-                                </span>
-                              </Button>
-                            ))}
-                          </PopoverContent>
-                        </Popover>
+                        <TaskPriorityPopover form={form} />
                       </FormControl>
                     </FormItem>
                   )}
