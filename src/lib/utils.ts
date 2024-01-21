@@ -7,7 +7,6 @@ import {
   Task,
   TaskFilterSort,
   TaskFilterSortDirection,
-  TaskPriority,
 } from './types';
 
 export function cn(...inputs: ClassValue[]) {
@@ -29,19 +28,6 @@ export function createTask({
     priority: priority ?? DEFAULT_TASK_PRIORITY,
     createdAt: new Date(),
   };
-}
-
-export function getTaskColor(priority: TaskPriority) {
-  switch (priority) {
-    case 1:
-      return 'red-400';
-    case 2:
-      return 'yellow-400';
-    case 3:
-      return 'blue-400';
-    case 4:
-      return 'slate-400';
-  }
 }
 
 export function alphabetComparison(a: Task, b: Task) {

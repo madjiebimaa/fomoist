@@ -8,8 +8,9 @@ import TaskForm from './TaskForm';
 import { Button, ButtonProps } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
+import { PRIORITIES } from '@/lib/constants';
 import { Task } from '@/lib/types';
-import { cn, getTaskColor } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useSelectedTask, useTaskActions } from '@/store/task';
 
 interface TaskCardProps {
@@ -37,6 +38,9 @@ export default function TaskCard({ task }: TaskCardProps) {
   });
 
   const isSelectedTask = selectedTask && selectedTask.id === task.id;
+  const selectedPriority = PRIORITIES.find(
+    (priority) => priority.value === task.priority
+  )!;
 
   const handleCheckClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -116,7 +120,7 @@ export default function TaskCard({ task }: TaskCardProps) {
               size="icon"
               className={cn(
                 'group/check-button shrink-0 h-5 w-5 rounded-full hover:bg-transparent',
-                `border-${getTaskColor(task.priority)}`
+                selectedPriority.borderColor
               )}
               onClick={handleCheckClick}
             >
@@ -124,7 +128,7 @@ export default function TaskCard({ task }: TaskCardProps) {
                 className={cn(
                   'shrink-0 h-3 w-3 text-slate-400 opacity-0 group-hover/check-button:opacity-100 group-hover/check-button:transition-opacity group-hover/check-button:duration-300',
                   task.isFinished && 'opacity-100',
-                  `text-${getTaskColor(task.priority)}`
+                  selectedPriority.textColor
                 )}
               />
             </Button>

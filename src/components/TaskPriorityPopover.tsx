@@ -5,8 +5,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { Button, ButtonProps, buttonVariants } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
-import { DEFAULT_TASK_PRIORITY } from '@/lib/constants';
-import { TaskPriority } from '@/lib/types';
+import { DEFAULT_TASK_PRIORITY, PRIORITIES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 interface TaskPriorityPopoverProps {
@@ -23,39 +22,7 @@ export default function TaskPriorityPopover({
 }: TaskPriorityPopoverProps) {
   const [open, setOpen] = useState(false);
 
-  const priorities: {
-    label: string;
-    value: TaskPriority;
-    textColor: string;
-    fillColor: string;
-  }[] = [
-    {
-      label: 'P1',
-      value: 1,
-      textColor: 'text-red-400',
-      fillColor: 'fill-red-400',
-    },
-    {
-      label: 'P2',
-      value: 2,
-      textColor: 'text-yellow-400',
-      fillColor: 'fill-yellow-400',
-    },
-    {
-      label: 'P3',
-      value: 3,
-      textColor: 'text-blue-400',
-      fillColor: 'fill-blue-400',
-    },
-    {
-      label: 'Priority',
-      value: 4,
-      textColor: 'text-slate-400',
-      fillColor: 'fill-transparent',
-    },
-  ];
-
-  const selectedPriority = priorities.find(
+  const selectedPriority = PRIORITIES.find(
     (priority) => priority.value === form.watch('priority')
   )!;
 
@@ -107,7 +74,7 @@ export default function TaskPriorityPopover({
         </div>
       </PopoverTrigger>
       <PopoverContent className="flex flex-col gap-2 w-fit">
-        {priorities.map((priority) => (
+        {PRIORITIES.map((priority) => (
           <Button
             key={priority.value}
             type="button"
