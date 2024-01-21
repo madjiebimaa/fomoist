@@ -21,6 +21,7 @@ export function createTask({
     isFinished: DEFAULT_TASK_IS_FINISHED,
     description,
     priority: priority ?? DEFAULT_TASK_PRIORITY,
+    createdAt: new Date(),
   };
 }
 
@@ -35,4 +36,10 @@ export function getTaskColor(priority: TaskPriority) {
     case 4:
       return 'slate-400';
   }
+}
+
+export function alphabetComparison(a: Task, b: Task) {
+  return a.name.localeCompare(b.name, 'en', {
+    ignorePunctuation: true,
+  });
 }

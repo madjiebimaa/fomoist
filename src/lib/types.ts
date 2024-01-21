@@ -7,13 +7,17 @@ export interface Task {
   isFinished: boolean;
   priority: TaskPriority;
   description?: string;
+  createdAt: Date;
 }
 
 export interface Template {
   id: string;
   name: string;
   tasks: Omit<Task, 'id' | 'isFinished'>[];
+  createdAt: Date;
 }
+
+export type TaskFilterSort = 'DATE_ADDED' | 'NAME' | 'PRIORITY';
 
 export type AddTaskParams = Pick<
   Task,

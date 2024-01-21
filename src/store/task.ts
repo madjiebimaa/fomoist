@@ -3,13 +3,18 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { AddTaskParams, Task, Template } from '@/lib/types';
-import { createTask } from '@/lib/utils';
+import { AddTaskParams, Task, TaskFilterSort, Template } from '@/lib/types';
+import { alphabetComparison, createTask } from '@/lib/utils';
 
 type TaskState = {
   tasks: Task[];
   selectedTask: Task | null;
   templates: Template[];
+  filters: {
+    sort: {
+      value: TaskFilterSort;
+    };
+  };
 };
 
 type TaskActions = {
@@ -28,6 +33,7 @@ type TaskActions = {
     addTemplate: (name: Template['name'], tasks: Task[]) => void;
     addTasksFromTemplate: (id: Template['id']) => void;
     deleteTemplate: (id: Template['id']) => void;
+    sortTasks: (value: TaskFilterSort) => void;
   };
 };
 
@@ -35,6 +41,11 @@ const initialState: TaskState = {
   tasks: [],
   selectedTask: null,
   templates: [],
+  filters: {
+    sort: {
+      value: 'DATE_ADDED',
+    },
+  },
 };
 
 const taskStore = create<TaskState & TaskActions>()(
@@ -130,6 +141,7 @@ const taskStore = create<TaskState & TaskActions>()(
                 tasks: tasks
                   .filter((task) => !task.isFinished)
                   .map((task) => createTask(task)),
+                createdAt: new Date(),
               },
             ],
           })),
@@ -150,6 +162,36 @@ const taskStore = create<TaskState & TaskActions>()(
           set((state) => ({
             templates: state.templates.filter((template) => template.id !== id),
           })),
+        sortTasks: (value) =>
+          set((state) => {
+            let sortedTasks = state.tasks;
+            switch (value) {
+              case 'DATE_ADDED':
+                sortedTasks = sortedTasks.sort(
+                  (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+                );
+                break;
+              case 'NAME':
+                sortedTasks = sortedTasks.sort((a, b) =>
+                  alphabetComparison(a, b)
+                );
+                break;
+              case 'PRIORITY':
+                sortedTasks = sortedTasks.sort(
+                  (a, b) => a.priority - b.priority
+                );
+                break;
+            }
+
+            return {
+              filters: {
+                sort: {
+                  value,
+                },
+              },
+              tasks: [...sortedTasks],
+            };
+          }),
       },
     }),
     {
@@ -167,4 +209,5 @@ const taskStore = create<TaskState & TaskActions>()(
 export const useTasks = () => taskStore((state) => state.tasks);
 export const useSelectedTask = () => taskStore((state) => state.selectedTask);
 export const useTemplates = () => taskStore((state) => state.templates);
+export const useTaskFilters = () => taskStore((state) => state.filters);
 export const useTaskActions = () => taskStore((state) => state.actions);

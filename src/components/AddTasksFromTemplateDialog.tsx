@@ -12,9 +12,10 @@ import {
 import { DropdownMenuItem } from './ui/dropdown-menu';
 
 import { cn } from '@/lib/utils';
-import { useTaskActions, useTemplates } from '@/store/task';
+import { useTaskActions, useTaskFilters, useTemplates } from '@/store/task';
 
 export default function AddTasksFromTemplateDialog() {
+  const taskFilters = useTaskFilters();
   const templates = useTemplates();
   const taskActions = useTaskActions();
 
@@ -50,7 +51,10 @@ export default function AddTasksFromTemplateDialog() {
                   buttonVariants({ variant: 'ghost' }),
                   'flex justify-between cursor-pointer'
                 )}
-                onClick={() => taskActions.addTasksFromTemplate(template.id)}
+                onClick={() => {
+                  taskActions.addTasksFromTemplate(template.id);
+                  taskActions.sortTasks(taskFilters.sort.value);
+                }}
               >
                 <span>{template.name}</span>
                 <Button

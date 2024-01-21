@@ -1,6 +1,7 @@
 import AddTaskButton from './components/AddTaskButton';
 import TaskCardList from './components/TaskCardList';
 import TaskDropDown from './components/TaskDropDown';
+import TaskSortDropDown from './components/TaskSortDropDown';
 import { Separator } from './components/ui/separator';
 import { Toaster as Sonner } from './components/ui/sonner';
 
@@ -10,7 +11,10 @@ export default function App() {
       <section className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-xl text-slate-900">Tasks</h2>
-          <TaskDropDown />
+          <div className="flex items-center gap-2">
+            <TaskSortDropDown />
+            <TaskDropDown />
+          </div>
         </div>
         <Separator />
         <TaskCardList />
