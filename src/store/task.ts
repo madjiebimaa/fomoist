@@ -10,7 +10,13 @@ import {
   TaskFilterSortDirection,
   Template,
 } from '@/lib/types';
-import { alphabetComparison, createTask } from '@/lib/utils';
+import {
+  applySortToTasks,
+  createTask,
+  getFirstUnfinishedTaskIndex,
+  pushTask,
+  toggleFinishedTaskValue,
+} from '@/lib/utils';
 
 type TaskState = {
   tasks: Task[];
@@ -44,6 +50,7 @@ type TaskActions = {
       value?: TaskFilterSort,
       direction?: TaskFilterSortDirection
     ) => void;
+    resetTaskFilters: () => void;
   };
 };
 
@@ -74,41 +81,19 @@ const taskStore = create<TaskState & TaskActions>()(
           })),
         toggleFinishedTask: (id) =>
           set((state) => {
-            let nextTasks = state.tasks;
-            nextTasks = nextTasks.map((task) => {
-              if (task.id === id) {
-                return {
-                  ...task,
-                  isFinished: !task.isFinished,
-                };
-              }
-
-              return task;
-            });
-
-            const taskToPush = nextTasks.find((task) => task.id)!;
-            if (taskToPush.isFinished) {
-              nextTasks = [
-                ...nextTasks.filter((task) => task.id !== taskToPush.id),
-                taskToPush,
-              ];
-            }
-
-            let selectedTaskIndex: number | null = null;
-            nextTasks.every((task, index) => {
-              if (!task.isFinished) {
-                selectedTaskIndex = index;
-                return false;
-              }
-
-              return true;
-            });
+            const toggledFinishedTasks = toggleFinishedTaskValue(
+              id,
+              state.tasks
+            );
+            const pushedTasks = pushTask(id, toggledFinishedTasks);
+            const firstUnfinishedTaskIndex =
+              getFirstUnfinishedTaskIndex(pushedTasks);
 
             return {
-              tasks: nextTasks,
+              tasks: pushedTasks,
               selectedTask:
-                selectedTaskIndex !== null
-                  ? nextTasks[selectedTaskIndex]
+                firstUnfinishedTaskIndex !== null
+                  ? pushedTasks[firstUnfinishedTaskIndex]
                   : null,
             };
           }),
@@ -179,29 +164,11 @@ const taskStore = create<TaskState & TaskActions>()(
             const sortDirection = direction
               ? direction
               : state.filters.sort.direction;
-            let sortedTasks = state.tasks;
-
-            const directionNumber = sortDirection === 'ASCENDING' ? 1 : -1;
-
-            switch (sortValue) {
-              case 'DATE_ADDED':
-                sortedTasks = sortedTasks.sort(
-                  (a, b) =>
-                    (a.createdAt.getTime() - b.createdAt.getTime()) *
-                    directionNumber
-                );
-                break;
-              case 'NAME':
-                sortedTasks = sortedTasks.sort(
-                  (a, b) => alphabetComparison(a, b) * directionNumber
-                );
-                break;
-              case 'PRIORITY':
-                sortedTasks = sortedTasks.sort(
-                  (a, b) => (a.priority - b.priority) * directionNumber
-                );
-                break;
-            }
+            const sortedTasks = applySortToTasks({
+              value: sortValue,
+              direction: sortDirection,
+              tasks: state.tasks,
+            });
 
             return {
               filters: {
@@ -213,6 +180,7 @@ const taskStore = create<TaskState & TaskActions>()(
               tasks: [...sortedTasks],
             };
           }),
+        resetTaskFilters: () => set({ filters: initialState.filters }),
       },
     }),
     {

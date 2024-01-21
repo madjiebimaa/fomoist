@@ -104,6 +104,18 @@ export default function TaskSortDropDown() {
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            className="text-rose-500 cursor-pointer focus:text-rose-600 hover:bg-slate-200"
+            onClick={() => {
+              taskActions.resetTaskFilters();
+              taskActions.sortTasks();
+            }}
+          >
+            <span>Reset all</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
