@@ -3,6 +3,7 @@ export type TaskPriority = 1 | 2 | 3 | 4;
 export interface Task {
   id: string;
   name: string;
+  actual: number;
   estimation: number;
   isFinished: boolean;
   priority: TaskPriority;

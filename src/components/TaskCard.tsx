@@ -173,7 +173,11 @@ export default function TaskCard({ task }: TaskCardProps) {
           </div>
         </div>
         <div className="flex items-center pl-7">
-          <span className="text-xs text-slate-400">{task.estimation}</span>
+          <div className="text-xs text-slate-400">
+            <span className="text-sm font-medium">{task.actual}</span>
+            {' / '}
+            <span>{task.estimation}</span>
+          </div>
         </div>
       </CardContent>
     </Card>

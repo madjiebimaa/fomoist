@@ -3,6 +3,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { DEFAULT_TASK_ACTUAL } from '@/lib/constants';
 import {
   AddTaskParams,
   Task,
@@ -51,6 +52,8 @@ type TaskActions = {
       direction?: TaskFilterSortDirection
     ) => void;
     resetTaskFilters: () => void;
+    increaseTaskActual: () => void;
+    clearActuals: () => void;
   };
 };
 
@@ -181,6 +184,26 @@ const taskStore = create<TaskState & TaskActions>()(
             };
           }),
         resetTaskFilters: () => set({ filters: initialState.filters }),
+        increaseTaskActual: () =>
+          set((state) => ({
+            tasks: state.tasks.map((task) => {
+              if (state.selectedTask && task.id === state.selectedTask.id) {
+                return {
+                  ...task,
+                  actual: task.actual + 1,
+                };
+              }
+
+              return task;
+            }),
+          })),
+        clearActuals: () =>
+          set((state) => ({
+            tasks: state.tasks.map((task) => ({
+              ...task,
+              actual: DEFAULT_TASK_ACTUAL,
+            })),
+          })),
       },
     }),
     {

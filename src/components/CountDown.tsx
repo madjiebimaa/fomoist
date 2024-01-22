@@ -11,12 +11,16 @@ import {
   useDuration,
   useIsRunning,
   usePomodoroActions,
+  useSelectedStep,
 } from '@/store/pomodoro';
+import { useTaskActions } from '@/store/task';
 
 export default function CountDown() {
+  const selectedStep = useSelectedStep();
   const duration = useDuration();
   const isRunning = useIsRunning();
   const pomodoroActions = usePomodoroActions();
+  const taskActions = useTaskActions();
 
   const { minutes, seconds } = getTimeUnits(duration);
   const formattedDuration = `${toTwoDigits(minutes)}:${toTwoDigits(seconds)}`;
@@ -27,10 +31,18 @@ export default function CountDown() {
       if (isRunning && duration > 0) {
         pomodoroActions.decreaseDuration();
       }
+
+      if (duration === 0) {
+        if (selectedStep === 'FOCUS') {
+          taskActions.increaseTaskActual();
+        }
+
+        pomodoroActions.nextStep();
+      }
     }, 1000);
 
     return () => clearInterval(countDown);
-  }, [duration, isRunning, pomodoroActions]);
+  }, [selectedStep, duration, isRunning, pomodoroActions, taskActions]);
 
   const handleCountDownClick = () => {
     isRunning

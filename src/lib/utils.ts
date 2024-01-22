@@ -1,7 +1,11 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { DEFAULT_TASK_IS_FINISHED, DEFAULT_TASK_PRIORITY } from './constants';
+import {
+  DEFAULT_TASK_ACTUAL,
+  DEFAULT_TASK_IS_FINISHED,
+  DEFAULT_TASK_PRIORITY,
+} from './constants';
 import {
   CreateTaskParams,
   Task,
@@ -22,6 +26,7 @@ export function createTask({
   return {
     id: crypto.randomUUID(),
     name,
+    actual: DEFAULT_TASK_ACTUAL,
     estimation,
     isFinished: DEFAULT_TASK_IS_FINISHED,
     description,

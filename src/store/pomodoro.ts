@@ -15,6 +15,7 @@ type PomodoroActions = {
     startCountDown: () => void;
     stopCountDown: () => void;
     selectStep: (step: PomodoroStep) => void;
+    nextStep: () => void;
   };
 };
 
@@ -33,6 +34,26 @@ const pomodoroStore = create<PomodoroState & PomodoroActions>()((set) => ({
     stopCountDown: () => set({ isRunning: false }),
     selectStep: (step) =>
       set({ selectedStep: step, duration: POMODORO_STEPS[step].duration }),
+    nextStep: () =>
+      set((state) => {
+        let nextPomodoroStep = state.selectedStep;
+        switch (state.selectedStep) {
+          case 'FOCUS':
+            nextPomodoroStep = 'SHORT_BREAK';
+            break;
+          case 'SHORT_BREAK':
+            nextPomodoroStep = 'LONG_BREAK';
+            break;
+          case 'LONG_BREAK':
+            nextPomodoroStep = 'FOCUS';
+            break;
+        }
+
+        return {
+          selectedStep: nextPomodoroStep,
+          duration: POMODORO_STEPS[nextPomodoroStep].duration,
+        };
+      }),
   },
 }));
 

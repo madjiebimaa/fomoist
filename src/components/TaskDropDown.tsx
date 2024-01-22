@@ -1,4 +1,4 @@
-import { MoreVertical, Trash, Trash2 } from 'lucide-react';
+import { Check, MoreVertical, Trash, Trash2 } from 'lucide-react';
 
 import AddTasksFromTemplateDialog from './AddTasksFromTemplateDialog';
 import TemplateFormDialog from './TemplateFormDialog';
@@ -28,6 +28,14 @@ export default function TaskDropDown() {
         <DropdownMenuGroup>
           <TemplateFormDialog />
           <AddTasksFromTemplateDialog />
+
+          <DropdownMenuItem
+            className="text-slate-600 cursor-pointer hover:bg-slate-200"
+            onSelect={() => taskActions.clearActuals()}
+          >
+            <Check className="shrink-0 h-4 w-4 mr-2" />
+            <span>Clear actual Pomodoros</span>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

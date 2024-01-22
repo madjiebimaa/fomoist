@@ -1,9 +1,11 @@
 import { Apple, LucideIcon, Sprout, TreeDeciduous } from 'lucide-react';
+
 import { PomodoroStep, Task, TaskPriority } from './types';
 
 export const DEFAULT_TASK_ESTIMATION = 1;
 export const DEFAULT_TASK_PRIORITY: Task['priority'] = 4;
 export const DEFAULT_TASK_IS_FINISHED = false;
+export const DEFAULT_TASK_ACTUAL = 0;
 
 export const PRIORITIES: {
   label: string;
@@ -48,7 +50,7 @@ export const POMODORO_STEPS: Record<
 > = {
   FOCUS: {
     Icon: Apple,
-    duration: 25 * 60 * 1000,
+    duration: 1 * 60 * 1000,
   },
   SHORT_BREAK: {
     Icon: Sprout,
