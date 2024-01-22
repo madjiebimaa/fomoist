@@ -6,6 +6,7 @@ import {
   DEFAULT_TASK_ACTUAL,
   DEFAULT_TASK_IS_FINISHED,
   DEFAULT_TASK_PRIORITY,
+  POMODORO_STEPS,
 } from './constants';
 import {
   CreateTaskParams,
@@ -109,10 +110,16 @@ export function getFirstUnfinishedTaskIndex(tasks: Task[]): number | null {
   return unfinishedTaskIndex;
 }
 
-export function getTimeUnits(duration: number) {
-  const minutes = Math.floor((duration % (60 * 60 * 1000)) / (60 * 1000));
-  const seconds = Math.floor((duration % (60 * 1000)) / 1000);
-  return { minutes, seconds };
+export function millisecondsToTime(milliseconds: number) {
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  return {
+    seconds: seconds % 60,
+    minutes: minutes % 60,
+    hours: hours % 24,
+  };
 }
 
 export function toTwoDigits(num: number) {
@@ -147,4 +154,27 @@ export function applyPomodoroStepRules(
   }
 
   return { nextPomodoroStep, nextPomodoroSession };
+}
+
+export function getTotalActual(tasks: Task[]) {
+  return tasks.reduce((total, task) => total + task.actual, 0);
+}
+
+export function getTotalEstimation(tasks: Task[]) {
+  return tasks.reduce((total, task) => total + task.estimation, 0);
+}
+
+export function getTotalDuration(tasks: Task[]) {
+  const totalEstimation = getTotalEstimation(tasks);
+
+  const [focusDuration, shortBreakDuration, longBreakDuration] = Object.entries(
+    POMODORO_STEPS
+  ).map(([, step]) => step.duration);
+
+  const focusTotal = Math.floor(totalEstimation) * focusDuration;
+  const shortBreakTotal =
+    (totalEstimation - Math.floor(totalEstimation / 4)) * shortBreakDuration;
+  const longBreakTotal = Math.floor(totalEstimation / 4) * longBreakDuration;
+
+  return focusTotal + shortBreakTotal + longBreakTotal;
 }

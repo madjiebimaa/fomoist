@@ -1,12 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SendHorizonal, Trash, X } from 'lucide-react';
+import { Apple, SendHorizonal, Trash, X } from 'lucide-react';
 import React, { forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import TaskEstimationButton from './TaskEstimationButton';
 import TaskPriorityPopover from './TaskPriorityPopover';
-import { Button } from './ui/button';
+import { Button, buttonVariants } from './ui/button';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Form, FormControl, FormField, FormItem } from './ui/form';
 import { Input } from './ui/input';
@@ -61,6 +61,7 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
         taskActions.editTask({
           id: task.id,
           name,
+          actual: task.actual,
           estimation,
           isFinished: task.isFinished,
           description,
@@ -140,6 +141,23 @@ export const TaskForm = forwardRef<HTMLDivElement, TaskFormProps>(
                 )}
               />
               <div className="flex flex-col md:flex-row md:items-center gap-2">
+                {task && (
+                  <div
+                    className={cn(
+                      buttonVariants({ variant: 'outline', size: 'sm' }),
+                      'shrink-0 h-8 w-fit gap-3 font-normal text-slate-400'
+                    )}
+                  >
+                    <div className="flex items-center">
+                      <Apple className="shrink-0 h-4 w-4 mr-1" />
+                      <span className="flex items-center text-slate-400">
+                        <span className="grid place-content-center min-h-4 min-w-4">
+                          {task.actual}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                )}
                 <FormField
                   control={form.control}
                   name="estimation"

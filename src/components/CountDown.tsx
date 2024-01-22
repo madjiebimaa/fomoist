@@ -6,7 +6,7 @@ import { Card, CardContent } from './ui/card';
 
 import { POMODORO_STEPS } from '@/lib/constants';
 import { PomodoroStep } from '@/lib/types';
-import { cn, getTimeUnits, toTwoDigits } from '@/lib/utils';
+import { cn, millisecondsToTime, toTwoDigits } from '@/lib/utils';
 import {
   useDuration,
   useIsRunning,
@@ -22,7 +22,7 @@ export default function CountDown() {
   const pomodoroActions = usePomodoroActions();
   const taskActions = useTaskActions();
 
-  const { minutes, seconds } = getTimeUnits(duration);
+  const { minutes, seconds } = millisecondsToTime(duration);
   const formattedDuration = `${toTwoDigits(minutes)}:${toTwoDigits(seconds)}`;
   const Icon = isRunning ? StopCircle : PlayCircle;
 
