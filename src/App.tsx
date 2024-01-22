@@ -1,4 +1,5 @@
 import AddTaskButton from './components/AddTaskButton';
+import CountDown from './components/CountDown';
 import TaskCardList from './components/TaskCardList';
 import TaskDropDown from './components/TaskDropDown';
 import TaskSortDropDown from './components/TaskSortDropDown';
@@ -9,6 +10,7 @@ export default function App() {
   return (
     <main className="flex flex-col py-4 px-10">
       <section className="flex flex-col gap-4">
+        <CountDown />
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-xl text-slate-900">Tasks</h2>
           <div className="flex items-center gap-2">

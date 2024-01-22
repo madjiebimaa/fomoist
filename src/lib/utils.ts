@@ -100,3 +100,16 @@ export function getFirstUnfinishedTaskIndex(tasks: Task[]): number | null {
 
   return unfinishedTaskIndex;
 }
+
+export function getTimeUnits(duration: number) {
+  const minutes = Math.floor((duration % (60 * 60 * 1000)) / (60 * 1000));
+  const seconds = Math.floor((duration % (60 * 1000)) / 1000);
+  return { minutes, seconds };
+}
+
+export function toTwoDigits(num: number) {
+  return num.toLocaleString('en-US', {
+    minimumIntegerDigits: 2,
+    useGrouping: false,
+  });
+}
