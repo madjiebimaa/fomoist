@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 
-import { POMODORO_STEPS } from '@/lib/constants';
+import { DEFAULT_POMODORO_SESSION, POMODORO_STEPS } from '@/lib/constants';
 import { PomodoroStep } from '@/lib/types';
 
 type PomodoroState = {
   selectedStep: PomodoroStep;
   duration: number;
   isRunning: boolean;
+  session: PomodoroStep[];
 };
 
 type PomodoroActions = {
@@ -23,6 +24,7 @@ const initialState: PomodoroState = {
   selectedStep: 'FOCUS',
   duration: POMODORO_STEPS['FOCUS'].duration,
   isRunning: false,
+  session: DEFAULT_POMODORO_SESSION,
 };
 
 const pomodoroStore = create<PomodoroState & PomodoroActions>()((set) => ({
@@ -36,22 +38,17 @@ const pomodoroStore = create<PomodoroState & PomodoroActions>()((set) => ({
       set({ selectedStep: step, duration: POMODORO_STEPS[step].duration }),
     nextStep: () =>
       set((state) => {
-        let nextPomodoroStep = state.selectedStep;
-        switch (state.selectedStep) {
-          case 'FOCUS':
-            nextPomodoroStep = 'SHORT_BREAK';
-            break;
-          case 'SHORT_BREAK':
-            nextPomodoroStep = 'LONG_BREAK';
-            break;
-          case 'LONG_BREAK':
-            nextPomodoroStep = 'FOCUS';
-            break;
+        let [, ...nextSession] = state.session;
+        if (nextSession.length === 0) {
+          nextSession = DEFAULT_POMODORO_SESSION;
         }
+
+        const nextPomodoroStep = nextSession[0];
 
         return {
           selectedStep: nextPomodoroStep,
           duration: POMODORO_STEPS[nextPomodoroStep].duration,
+          session: nextSession,
         };
       }),
   },
@@ -61,4 +58,5 @@ export const useSelectedStep = () =>
   pomodoroStore((state) => state.selectedStep);
 export const useDuration = () => pomodoroStore((state) => state.duration);
 export const useIsRunning = () => pomodoroStore((state) => state.isRunning);
+export const useSession = () => pomodoroStore((state) => state.session);
 export const usePomodoroActions = () => pomodoroStore((state) => state.actions);

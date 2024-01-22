@@ -50,7 +50,7 @@ export const POMODORO_STEPS: Record<
 > = {
   FOCUS: {
     Icon: Apple,
-    duration: 1 * 60 * 1000,
+    duration: 25 * 60 * 1000,
   },
   SHORT_BREAK: {
     Icon: Sprout,
@@ -61,3 +61,14 @@ export const POMODORO_STEPS: Record<
     duration: 15 * 60 * 1000,
   },
 };
+
+export const DEFAULT_POMODORO_SESSION: PomodoroStep[] = [
+  'FOCUS',
+  'SHORT_BREAK',
+  'FOCUS',
+  'SHORT_BREAK',
+  'FOCUS',
+  'SHORT_BREAK',
+  'FOCUS',
+  'LONG_BREAK',
+];
