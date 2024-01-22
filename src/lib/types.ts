@@ -26,3 +26,5 @@ export type AddTaskParams = Pick<
   'name' | 'description' | 'estimation' | 'priority'
 >;
 export type CreateTaskParams = AddTaskParams;
+
+export type PomodoroStep = 'FOCUS' | 'SHORT_BREAK' | 'LONG_BREAK';
