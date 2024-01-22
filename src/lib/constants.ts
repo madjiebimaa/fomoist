@@ -50,15 +50,15 @@ export const POMODORO_STEPS: Record<
 > = {
   FOCUS: {
     Icon: Apple,
-    duration: 25  * 1000,
+    duration: 25 * 60 * 1000,
   },
   SHORT_BREAK: {
     Icon: Sprout,
-    duration: 5  * 1000,
+    duration: 5 * 60 * 1000,
   },
   LONG_BREAK: {
     Icon: TreeDeciduous,
-    duration: 15  * 1000,
+    duration: 15 * 60 * 1000,
   },
 };
 

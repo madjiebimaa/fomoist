@@ -1,12 +1,12 @@
-import { PlayCircle, StopCircle } from 'lucide-react';
+import { PlayCircle, SkipForward, StopCircle } from 'lucide-react';
 import { useEffect } from 'react';
 
-import { Button } from './ui/button';
+import { Button, ButtonProps } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
 import { POMODORO_STEPS } from '@/lib/constants';
 import { PomodoroStep } from '@/lib/types';
-import { getTimeUnits, toTwoDigits } from '@/lib/utils';
+import { cn, getTimeUnits, toTwoDigits } from '@/lib/utils';
 import {
   useDuration,
   useIsRunning,
@@ -44,16 +44,42 @@ export default function CountDown() {
     return () => clearInterval(countDown);
   }, [selectedStep, duration, isRunning, pomodoroActions, taskActions]);
 
+  const handleStepClick = (id: PomodoroStep) => {
+    pomodoroActions.stopCountDown();
+    setTimeout(() => {
+      pomodoroActions.selectStep(id);
+      pomodoroActions.startCountDown();
+    }, 500);
+  };
+
   const handleCountDownClick = () => {
     isRunning
       ? pomodoroActions.stopCountDown()
       : pomodoroActions.startCountDown();
   };
 
+  const handleSkipStepClick = () => {
+    pomodoroActions.stopCountDown();
+    setTimeout(() => {
+      pomodoroActions.nextStep();
+      pomodoroActions.startCountDown();
+    }, 500);
+  };
+
   const pomodoroSteps = Object.entries(POMODORO_STEPS).map(([key, value]) => ({
     id: key,
     Icon: value.Icon,
   }));
+
+  const countDownButtonStyle: ButtonProps = {
+    variant: 'ghost',
+    size: 'icon',
+    className: 'shrink-0 h-20 md:h-30 w-20 md:w-30 hover:bg-transparent',
+  };
+
+  const countDownButtonIconStyle = {
+    className: 'shrink-0 h-16 md:h-20 w-16 md:w-20 text-slate-400',
+  };
 
   return (
     <Card className="rounded-none border-2 border-slate-400 bg-slate-200 shadow-md">
@@ -65,7 +91,7 @@ export default function CountDown() {
               variant="secondary"
               size="sm"
               className="text-xs text-slate-400"
-              onClick={() => pomodoroActions.selectStep(id as PomodoroStep)}
+              onClick={() => handleStepClick(id as PomodoroStep)}
             >
               <Icon className="shrink-0 h-4 w-4" />
             </Button>
@@ -75,14 +101,28 @@ export default function CountDown() {
           <p className="font-bold text-7xl md:text-9xl text-slate-400 text-center">
             {formattedDuration}
           </p>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="shrink-0 h-fit w-fit hover:bg-transparent"
-            onClick={handleCountDownClick}
-          >
-            <Icon className="shrink-0 h-16 md:h-20 w-16 md:w-20 text-slate-400" />
-          </Button>
+          <div className="relative flex justify-center items-center">
+            <Button
+              variant={countDownButtonStyle.variant}
+              size={countDownButtonStyle.size}
+              className={cn(countDownButtonStyle.className)}
+              onClick={handleCountDownClick}
+            >
+              <Icon className={cn(countDownButtonIconStyle.className)} />
+            </Button>
+            <Button
+              variant={countDownButtonStyle.variant}
+              size={countDownButtonStyle.size}
+              className={cn(
+                countDownButtonStyle.className,
+                'absolute left-[70px] md:left-28 opacity-0 transition-opacity duration-300',
+                isRunning && 'opacity-100'
+              )}
+              onClick={handleSkipStepClick}
+            >
+              <SkipForward className={cn(countDownButtonIconStyle.className)} />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
