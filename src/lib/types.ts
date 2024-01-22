@@ -29,3 +29,5 @@ export type AddTaskParams = Pick<
 export type CreateTaskParams = AddTaskParams;
 
 export type PomodoroStep = 'FOCUS' | 'SHORT_BREAK' | 'LONG_BREAK';
+
+export type PomodoroSession = Map<PomodoroStep, number>

@@ -2,12 +2,15 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import {
+  DEFAULT_POMODORO_SESSION,
   DEFAULT_TASK_ACTUAL,
   DEFAULT_TASK_IS_FINISHED,
   DEFAULT_TASK_PRIORITY,
 } from './constants';
 import {
   CreateTaskParams,
+  PomodoroSession,
+  PomodoroStep,
   Task,
   TaskFilterSort,
   TaskFilterSortDirection,
@@ -117,4 +120,31 @@ export function toTwoDigits(num: number) {
     minimumIntegerDigits: 2,
     useGrouping: false,
   });
+}
+
+export function applyPomodoroStepRules(
+  selectedStep: PomodoroStep,
+  session: PomodoroSession
+) {
+  let nextPomodoroStep = selectedStep;
+  let nextPomodoroSession = session;
+
+  if (selectedStep === 'FOCUS') {
+    if (session.get('FOCUS') === 0) {
+      nextPomodoroStep = 'LONG_BREAK';
+    } else {
+      nextPomodoroStep = 'SHORT_BREAK';
+    }
+  }
+
+  if (selectedStep === 'SHORT_BREAK') {
+    nextPomodoroStep = 'FOCUS';
+  }
+
+  if (selectedStep === 'LONG_BREAK' && session.get('LONG_BREAK') === 0) {
+    nextPomodoroStep = 'FOCUS';
+    nextPomodoroSession = new Map(DEFAULT_POMODORO_SESSION);
+  }
+
+  return { nextPomodoroStep, nextPomodoroSession };
 }

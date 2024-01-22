@@ -1,6 +1,6 @@
 import { Apple, LucideIcon, Sprout, TreeDeciduous } from 'lucide-react';
 
-import { PomodoroStep, Task, TaskPriority } from './types';
+import { PomodoroSession, PomodoroStep, Task, TaskPriority } from './types';
 
 export const DEFAULT_TASK_ESTIMATION = 1;
 export const DEFAULT_TASK_PRIORITY: Task['priority'] = 4;
@@ -50,25 +50,20 @@ export const POMODORO_STEPS: Record<
 > = {
   FOCUS: {
     Icon: Apple,
-    duration: 25 * 60 * 1000,
+    duration: 25  * 1000,
   },
   SHORT_BREAK: {
     Icon: Sprout,
-    duration: 5 * 60 * 1000,
+    duration: 5  * 1000,
   },
   LONG_BREAK: {
     Icon: TreeDeciduous,
-    duration: 15 * 60 * 1000,
+    duration: 15  * 1000,
   },
 };
 
-export const DEFAULT_POMODORO_SESSION: PomodoroStep[] = [
-  'FOCUS',
-  'SHORT_BREAK',
-  'FOCUS',
-  'SHORT_BREAK',
-  'FOCUS',
-  'SHORT_BREAK',
-  'FOCUS',
-  'LONG_BREAK',
-];
+export const DEFAULT_POMODORO_SESSION: PomodoroSession = new Map([
+  ['FOCUS', 4],
+  ['SHORT_BREAK', 3],
+  ['LONG_BREAK', 1],
+]);
