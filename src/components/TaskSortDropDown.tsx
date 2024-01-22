@@ -57,7 +57,7 @@ export default function TaskSortDropDown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+          <DropdownMenuLabel className="font-medium">Sort by</DropdownMenuLabel>
           {taskSorts.map((taskSort) => (
             <DropdownMenuItem
               key={taskSort.value}
@@ -81,7 +81,9 @@ export default function TaskSortDropDown() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Direction</DropdownMenuLabel>
+          <DropdownMenuLabel className="font-medium">
+            Direction
+          </DropdownMenuLabel>
           {taskSortDirections.map((taskSortDirection) => (
             <DropdownMenuItem
               key={taskSortDirection.value}

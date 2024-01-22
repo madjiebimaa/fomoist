@@ -45,11 +45,16 @@ export default function CountDown() {
   }, [selectedStep, duration, isRunning, pomodoroActions, taskActions]);
 
   const handleStepClick = (id: PomodoroStep) => {
-    pomodoroActions.stopCountDown();
-    setTimeout(() => {
+    if (isRunning) {
+      pomodoroActions.stopCountDown();
+
+      setTimeout(() => {
+        pomodoroActions.selectStep(id);
+        pomodoroActions.startCountDown();
+      }, 500);
+    } else {
       pomodoroActions.selectStep(id);
-      pomodoroActions.startCountDown();
-    }, 500);
+    }
   };
 
   const handleCountDownClick = () => {
