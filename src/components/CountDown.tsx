@@ -1,5 +1,6 @@
 import { PlayCircle, SkipForward, StopCircle } from 'lucide-react';
 import { useEffect } from 'react';
+import useSound from 'use-sound';
 
 import { Button, ButtonProps } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -15,12 +16,20 @@ import {
 } from '@/store/pomodoro';
 import { useTaskActions } from '@/store/task';
 
+import clockAlarmSfx from '@/assets/sounds/clock-alarm.mp3';
+import fingerSnapSfx from '@/assets/sounds/finger-snap.mp3';
+import switchSfx from '@/assets/sounds/switch.mp3';
+
 export default function CountDown() {
   const selectedStep = useSelectedStep();
   const duration = useDuration();
   const isRunning = useIsRunning();
   const pomodoroActions = usePomodoroActions();
   const taskActions = useTaskActions();
+
+  const [playSwitch] = useSound(switchSfx);
+  const [playClockAlarm] = useSound(clockAlarmSfx);
+  const [playFingerSnap] = useSound(fingerSnapSfx);
 
   const { minutes, seconds } = millisecondsToTime(duration);
   const formattedDuration = `${toTwoDigits(minutes)}:${toTwoDigits(seconds)}`;
@@ -29,10 +38,13 @@ export default function CountDown() {
   useEffect(() => {
     const countDown = setInterval(() => {
       if (isRunning && duration > 0) {
+        playFingerSnap();
         pomodoroActions.decreaseDuration();
       }
 
       if (duration === 0) {
+        playClockAlarm();
+
         if (selectedStep === 'FOCUS') {
           taskActions.increaseTaskActual();
         }
@@ -42,7 +54,15 @@ export default function CountDown() {
     }, 1000);
 
     return () => clearInterval(countDown);
-  }, [selectedStep, duration, isRunning, pomodoroActions, taskActions]);
+  }, [
+    selectedStep,
+    duration,
+    isRunning,
+    pomodoroActions,
+    taskActions,
+    playFingerSnap,
+    playClockAlarm,
+  ]);
 
   const handleStepClick = (id: PomodoroStep) => {
     if (isRunning) {
@@ -61,6 +81,7 @@ export default function CountDown() {
     isRunning
       ? pomodoroActions.stopCountDown()
       : pomodoroActions.startCountDown();
+    playSwitch();
   };
 
   const handleSkipStepClick = () => {
