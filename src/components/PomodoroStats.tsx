@@ -6,12 +6,13 @@ import {
 import { Card, CardContent } from './ui/card';
 
 import { useTasks } from '@/store/task';
+import { useMemo } from 'react';
 
 export default function PomodoroStats() {
   const tasks = useTasks();
 
-  const totalActual = getTotalActual(tasks);
-  const totalEstimation = getTotalEstimation(tasks);
+  const totalActual = useMemo(() => getTotalActual(tasks), [tasks]);
+  const totalEstimation = useMemo(() => getTotalEstimation(tasks), [tasks]);
   const totalDuration = getTotalDuration(tasks);
 
   const finishAt = new Date(new Date().getTime() + totalDuration);

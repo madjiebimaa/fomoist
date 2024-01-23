@@ -1,5 +1,5 @@
 import { PlayCircle, SkipForward, StopCircle } from 'lucide-react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import useSound from 'use-sound';
 
 import { Button, ButtonProps } from './ui/button';
@@ -64,18 +64,21 @@ export default function CountDown() {
     playClockAlarm,
   ]);
 
-  const handleStepClick = (id: PomodoroStep) => {
-    if (isRunning) {
-      pomodoroActions.stopCountDown();
+  const handleStepClick = useCallback(
+    (id: PomodoroStep) => {
+      if (isRunning) {
+        pomodoroActions.stopCountDown();
 
-      setTimeout(() => {
+        setTimeout(() => {
+          pomodoroActions.selectStep(id);
+          pomodoroActions.startCountDown();
+        }, 500);
+      } else {
         pomodoroActions.selectStep(id);
-        pomodoroActions.startCountDown();
-      }, 500);
-    } else {
-      pomodoroActions.selectStep(id);
-    }
-  };
+      }
+    },
+    [isRunning, pomodoroActions]
+  );
 
   const handleCountDownClick = () => {
     isRunning
@@ -84,13 +87,13 @@ export default function CountDown() {
     playSwitch();
   };
 
-  const handleSkipStepClick = () => {
+  const handleSkipStepClick = useCallback(() => {
     pomodoroActions.stopCountDown();
     setTimeout(() => {
       pomodoroActions.nextStep();
       pomodoroActions.startCountDown();
     }, 500);
-  };
+  }, [pomodoroActions]);
 
   const pomodoroSteps = Object.entries(POMODORO_STEPS).map(([key, value]) => ({
     id: key,

@@ -1,31 +1,33 @@
-import { useEffect, useState } from 'react';
+import { LayoutPanelLeft } from 'lucide-react';
 
 import TaskDropDown from './TaskDropDown';
 import TaskSortDropDown from './TaskSortDropDown';
+import { Button } from './ui/button';
 
 import { cn } from '@/lib/utils';
+import { useLayoutActions, useSidebarOpen } from '@/store/layout';
 
 export default function Navbar() {
-  const [navbarScroll, setNavbarScroll] = useState(false);
-  const [titleScroll, setTitleScroll] = useState(false);
-
-  useEffect(() => {
-    window.addEventListener('scroll', () => {
-      setNavbarScroll(window.scrollY > 10);
-      setTitleScroll(window.scrollY > 310);
-    });
-  }, []);
+  const sidebarOpen = useSidebarOpen();
+  const layoutActions = useLayoutActions();
 
   return (
     <nav
       className={cn(
-        'sticky top-0 z-50 flex justify-between items-center p-3 bg-white border-b border-b-transparent shadow-none duration-300 ease-out',
-        navbarScroll && 'border-b-slate-200 shadow-md'
+        'z-10 sticky top-0 flex justify-between items-center p-3 bg-white'
       )}
     >
-      <div className="absolute top-2/4 left-2/4 -translate-x-1/2 -translate-y-1/2 font-medium text-slate-900">
-        {titleScroll && 'Inbox'}
-      </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(
+          'shrink-0 h-8 w-8 opacity-100 visible transition-opacity duration-300',
+          sidebarOpen && 'opacity-0 invisible'
+        )}
+        onClick={() => layoutActions.toggleSidebarOpen()}
+      >
+        <LayoutPanelLeft className="shrink-0 h-4 w-4" />
+      </Button>
       <div className="flex items-center gap-2 ml-auto">
         <TaskSortDropDown />
         <TaskDropDown />
