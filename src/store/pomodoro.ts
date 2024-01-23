@@ -62,15 +62,15 @@ const pomodoroStore = create<PomodoroState & PomodoroActions>()(
       name: 'pomodoro-storage',
       storage: createJSONStorage(() => localStorage, {
         reviver: (key, value) => {
-          if (key === 'session' && typeof value === 'object') {
-            return JSON.stringify(value);
+          if (key === 'session' && typeof value === 'string') {
+            return new Map(Object.entries(JSON.parse(value)));
           }
 
           return value;
         },
         replacer: (key, value) => {
-          if (key === 'session' && typeof value === 'string') {
-            return JSON.parse(value);
+          if (key === 'session' && value instanceof Map) {
+            return JSON.stringify(Object.fromEntries(value.entries()));
           }
 
           return value;
