@@ -26,13 +26,16 @@ export default function TaskCardList() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 10,
+        distance: 100,
+        delay: 300,
+        tolerance: 0,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        distance: 10,
-        delay: 1000,
+        distance: 100,
+        delay: 300,
+        tolerance: 0,
       },
     })
   );

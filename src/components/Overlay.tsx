@@ -7,7 +7,7 @@ export default function Overlay() {
   return (
     <div
       className={cn(
-        'z-20 absolute top-0 left-0 h-full w-full bg-black/50 opacity-0 invisible transition-all duration-300',
+        'z-20 absolute top-0 left-0 h-screen w-screen bg-black/50 opacity-0 invisible transition-all duration-300',
         sidebarOpen && 'opacity-80 visible md:opacity-0 md:invisible'
       )}
     />
