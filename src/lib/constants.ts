@@ -1,6 +1,12 @@
 import { Apple, LucideIcon, Sprout, TreeDeciduous } from 'lucide-react';
 
-import { PomodoroSession, PomodoroStep, Task, TaskPriority } from './types';
+import {
+  PomodoroSession,
+  PomodoroStep,
+  ProjectColor,
+  Task,
+  TaskPriority,
+} from './types';
 
 export const DEFAULT_TASK_ESTIMATION = 1;
 export const DEFAULT_TASK_PRIORITY: Task['priority'] = 4;
@@ -67,3 +73,46 @@ export const DEFAULT_POMODORO_SESSION: PomodoroSession = new Map([
   ['SHORT_BREAK', 3],
   ['LONG_BREAK', 1],
 ]);
+
+export const PROJECT_COLORS: ProjectColor[] = [
+  {
+    name: 'Hyper',
+    code: 'bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500',
+  },
+  {
+    name: 'Oceanic',
+    code: 'bg-gradient-to-r from-green-300 via-blue-500 to-purple-600',
+  },
+  {
+    name: 'Cotton Candy',
+    code: 'bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400',
+  },
+  {
+    name: 'Gotham',
+    code: 'bg-gradient-to-r from-gray-700 via-gray-900 to-black',
+  },
+  {
+    name: 'Sunset',
+    code: 'bg-gradient-to-r from-indigo-200 via-red-200 to-yellow-100',
+  },
+  {
+    name: 'Mojave',
+    code: 'bg-gradient-to-r from-yellow-100 via-yellow-300 to-yellow-500',
+  },
+  {
+    name: 'Beachside',
+    code: 'bg-gradient-to-r from-yellow-200 via-green-200 to-green-500',
+  },
+  {
+    name: 'Gunmetal',
+    code: 'bg-gradient-to-r from-gray-200 via-gray-400 to-gray-600',
+  },
+  {
+    name: 'Peachy',
+    code: 'bg-gradient-to-r from-red-200 via-red-300 to-yellow-200',
+  },
+  {
+    name: 'Seaform',
+    code: 'bg-gradient-to-r from-green-200 via-green-300 to-blue-500',
+  },
+];

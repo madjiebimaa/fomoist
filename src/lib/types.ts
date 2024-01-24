@@ -18,6 +18,18 @@ export interface Template {
   createdAt: Date;
 }
 
+export type ProjectColor = {
+  name: string;
+  code: string;
+};
+
+export interface Project {
+  id: string;
+  name: string;
+  color: ProjectColor;
+  createdAt: Date;
+}
+
 export type TaskFilterSort = 'DATE_ADDED' | 'NAME' | 'PRIORITY';
 
 export type TaskFilterSortDirection = 'ASCENDING' | 'DESCENDING';
@@ -30,4 +42,4 @@ export type CreateTaskParams = AddTaskParams;
 
 export type PomodoroStep = 'FOCUS' | 'SHORT_BREAK' | 'LONG_BREAK';
 
-export type PomodoroSession = Map<PomodoroStep, number>
+export type PomodoroSession = Map<PomodoroStep, number>;

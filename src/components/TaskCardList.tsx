@@ -12,7 +12,6 @@ import { SortableContext } from '@dnd-kit/sortable';
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import FinishedTasksCollapsible from './FinishedTasksCollapsible';
 import TaskCard from './TaskCard';
 
 import { Task } from '@/lib/types';
@@ -73,7 +72,6 @@ export default function TaskCardList() {
           {unfinishedTasks.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
-          <FinishedTasksCollapsible className="mt-10" />
         </SortableContext>
       </section>
 
